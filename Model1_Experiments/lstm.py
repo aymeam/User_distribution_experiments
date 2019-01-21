@@ -191,9 +191,7 @@ def gen_sequence(tweets):
     y_map = {
             'none': 0,
             'racism': 1,
-            'sexism': 1,
-            'none':0,
-            'hate':1
+            'sexism': 2,
             }
 
     X, y = [], []
@@ -385,6 +383,7 @@ def train_LSTM_Holdout(X,y, model, inp_dim, weights, train_index, test_index, ep
     print (precision_recall_fscore_support(y_test, y_pred))
     #print (y_pred)
     #a = accuracy_score (y_test, y_pred)
+
     p = precision_score(y_test, y_pred, average='weighted')
     p1 = precision_score(y_test, y_pred, average='micro')
     r = recall_score(y_test, y_pred, average='weighted')
@@ -562,7 +561,7 @@ def train_LSTM(X, y, model, inp_dim, weights, epochs, batch_size):
     
     np.save('lstm.npy',weights/NO_OF_FOLDS)
     
-def gen_data(tweets_list,word2vec_model):
+def gen_data(tweets_list, word2vec_model):
     y_map = {
             'none': 0,
             'racism': 1,
@@ -637,7 +636,11 @@ def gradient_boosting_classifier(tweets, wordEmb, train_index, test_index):
     print (classification_report(y_test, y_pred))
     print (precision_recall_fscore_support(y_test, y_pred))
     #print (weights/NO_OF_FOLDS)
+    
     a = accuracy_score (y_test, y_pred)
+    precision = precision_score(y_test, y_pred, average=None)
+    recall = recall_score(y_test, y_pred, average=None)
+    f1_s = f1_score(y_test, y_pred, average=None)
     p = precision_score(y_test, y_pred, average='weighted')
     p1 = precision_score(y_test, y_pred, average='micro')
     r = recall_score(y_test, y_pred, average='weighted')
@@ -645,7 +648,7 @@ def gradient_boosting_classifier(tweets, wordEmb, train_index, test_index):
     f1 = f1_score(y_test, y_pred, average='weighted')
     f11 = f1_score(y_test, y_pred, average='micro')
 
-    return a, p, p1, r, r1, f1, f11
+    return precision,recall,f1_s,a, p, p1, r, r1, f1, f11
     
 def train_LSTM_OK(tweets,X, y, model, inp_dim, weights, epochs, batch_size):
     cv_object = StratifiedKFold(n_splits=NO_OF_FOLDS, shuffle=True, random_state=42)
@@ -686,22 +689,29 @@ def train_LSTM_OK(tweets,X, y, model, inp_dim, weights, epochs, batch_size):
                 loss, acc = model.train_on_batch(x, y_temp, class_weight=class_weights)
                 #print (loss, acc)
         wordEmb = model.layers[0].get_weights()[0]
-        acc, p_weighted, p_micro, r_weighted, r1_micro, f1_weighted, f11_micro = gradient_boosting_classifier(tweets, wordEmb, train_index, test_index)
+        precision, recall, f1_score, acc, p_weighted, p_macro, r_weighted, r1_macro, f1_weighted, f11_macro = gradient_boosting_classifier(tweets, wordEmb, train_index, test_index)
         a += acc
         p += p_weighted
-        p1 += p_micro
+        p1 += p_macro
         r += r_weighted
-        r1 += r1_micro
+        r1 += r1_macro
         f1 += f1_weighted
-        f11 += f11_micro
-
+        f11 += f11_macro
+        pn += precision
+        rn += recall
+        fn += f1_score
+    print ("None average results are:")
+    print (prod(pn, NO_OF_FOLDS))
+    print (prod(rn, NO_OF_FOLDS))
+    print (prod(fn, NO_OF_FOLDS))       
+    
     print ("macro results are")
     print ("average accuracy is %f" %(a/NO_OF_FOLDS))
     print ("average precision is %f" %(p/NO_OF_FOLDS))
     print ("average recall is %f" %(r/NO_OF_FOLDS))
     print ("average f1 is %f" %(f1/NO_OF_FOLDS))
 
-    print ("micro results are")
+    print ("macro results are")
     print ("average precision is %f" %(p1/NO_OF_FOLDS))
     print ("average recall is %f" %(r1/NO_OF_FOLDS))
     print ("average f1 is %f" %(f11/NO_OF_FOLDS))
@@ -775,9 +785,8 @@ def runrun_experiment4():
     W = get_embedding_weights()
     model = lstm_model(data.shape[1], EMBEDDING_DIM)
     #model = lstm_model(data.shape[1], 25, get_embedding_weights())
-     train_LSTM_cv_users(model, EMBEDDING_DIM, W, epochs=EPOCHS, batch_size=128)
-  
-   def run_experiment5()
+    train_LSTM_cv_users(model, EMBEDDING_DIM, W, epochs=EPOCHS, batch_size=128)
+def run_experiment5():
     #Experimento Cross Domain dataset partition
     tweets_train = select_tweets_train()
     tweets_test = select_tweets_test()

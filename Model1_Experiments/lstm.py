@@ -602,21 +602,21 @@ def select_tweets_whose_embedding_exists(tweets, word2vec_model):
     return tweet_return    
     
 def gradient_boosting_classifier(tweets, wordEmb, train_index, test_index):
-    #Embedings
+
     a, p, r, f1 = 0., 0., 0., 0.
     a1, p1, r1, f11 = 0., 0., 0., 0.
+    pn, rn, fn = 0., 0., 0.
     print('gradient_boosting_classifier')
     word2vec_model1 = wordEmb.reshape((wordEmb.shape[0], wordEmb.shape[1]))
     word2vec_model = {}
     for k,v in vocab.items():
         word2vec_model[k] = word2vec_model1[int(v)]
     del word2vec_model1
-    clf = xgb.XGBClassifier(nthread=-1)
-    
+    clf = xgb.XGBClassifier(nthread=-1)  
     
     tweets_train = []
     tweets_test = []
-    for i in range(len(train_index)):
+    for i in range(len(tweets)):
         if i in train_index:
             tweets_train.append(tweets[i])
         else:
@@ -642,11 +642,11 @@ def gradient_boosting_classifier(tweets, wordEmb, train_index, test_index):
     recall = recall_score(y_test, y_pred, average=None)
     f1_s = f1_score(y_test, y_pred, average=None)
     p = precision_score(y_test, y_pred, average='weighted')
-    p1 = precision_score(y_test, y_pred, average='micro')
+    p1 = precision_score(y_test, y_pred, average='macro')
     r = recall_score(y_test, y_pred, average='weighted')
-    r1 = recall_score(y_test, y_pred, average='micro')
+    r1 = recall_score(y_test, y_pred, average='macro')
     f1 = f1_score(y_test, y_pred, average='weighted')
-    f11 = f1_score(y_test, y_pred, average='micro')
+    f11 = f1_score(y_test, y_pred, average='macro')
 
     return precision,recall,f1_s,a, p, p1, r, r1, f1, f11
     
@@ -655,6 +655,8 @@ def train_LSTM_OK(tweets,X, y, model, inp_dim, weights, epochs, batch_size):
     print (cv_object)
     a, p, r, f1 = 0., 0., 0., 0.
     a1, p1, r1, f11 = 0., 0., 0., 0.
+    pn, rn, fn = 0., 0., 0.
+
     sentence_len = X.shape[1]
     
     for train_index, test_index in cv_object.split(X,y):
@@ -665,6 +667,9 @@ def train_LSTM_OK(tweets,X, y, model, inp_dim, weights, epochs, batch_size):
         else:
             print ("ERROR!")
             return
+        print('train_index')
+        print(len(train_index))
+        print(train_index)
         X_train, y_train = X[train_index], y[train_index]
         X_test, y_test = X[test_index], y[test_index]
         y_train = y_train.reshape((len(y_train), 1))
@@ -705,7 +710,7 @@ def train_LSTM_OK(tweets,X, y, model, inp_dim, weights, epochs, batch_size):
     print (prod(rn, NO_OF_FOLDS))
     print (prod(fn, NO_OF_FOLDS))       
     
-    print ("macro results are")
+    print ("weighted results are")
     print ("average accuracy is %f" %(a/NO_OF_FOLDS))
     print ("average precision is %f" %(p/NO_OF_FOLDS))
     print ("average recall is %f" %(r/NO_OF_FOLDS))

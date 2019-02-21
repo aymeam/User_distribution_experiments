@@ -10,9 +10,12 @@ import tflearn
 from sklearn.metrics import make_scorer, f1_score, accuracy_score, recall_score, precision_score, classification_report, precision_recall_fscore_support
 from auxiliares import *
 
-def run_model_exp5(oversampling_rate, vector_type, embed_size):   
+def run_model_exp5(oversampling_rate, vector_type, embed_size,flag):   
     #sin usuarios solapados en training y testin
-    model_type = "binary_blstm"
+    if flag == 'binary':
+        model_type = "binary_blstm"
+    else:
+        model_type = "blstm"
     tweets = pickle.load(open('DatosCSV/data_sorted.pkl', 'rb'))
     x_text, labels = load_data('data_sorted')
     
@@ -21,10 +24,10 @@ def run_model_exp5(oversampling_rate, vector_type, embed_size):
     a, p, r, f1 = 0., 0., 0., 0.
     p1, r1, f11 = 0., 0., 0.
     pn, rn, fn = 0., 0., 0.
-    train_indexes= cv_sorted_data(x_text)
+    test_indexes= cv_sorted_data(x_text)
     all_names = []
 
-    for test_index in train_indexes:
+    for test_index in test_indexes:
         X_train, y_train, X_test, y_test,names_train,names_test = [],[],[],[],[],[]
         for i in range(len(x_text)):
             if i  not in test_index:
@@ -80,4 +83,5 @@ if __name__ == "__main__":
     oversampling_rate = 3
     NO_OF_FOLDS = 5
     embed_size = 50
-    run_model_exp5(oversampling_rate,  vector_type, embed_size)
+    flag = 'binary'
+    run_model_exp5(oversampling_rate,  vector_type, embed_size,flag)

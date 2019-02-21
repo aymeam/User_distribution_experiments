@@ -10,7 +10,7 @@ import tflearn
 from sklearn.metrics import make_scorer, f1_score, accuracy_score, recall_score, precision_score, classification_report, precision_recall_fscore_support
 from auxiliares import *
 
-def run_model_exp2(oversampling_rate, model_type, vector_type, flag):   
+def run_model_exp2(oversampling_rate, vector_type, embed_size, flag):   
     x_text, labels = load_data('train')
     
     if flag == 'binary':

@@ -45,11 +45,11 @@ def run_model_exp4(oversampling_rate, vector_type, embed_size,strategy,flag):
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Results using partitions of the Waseem & Hovy’sdataset into train set and test set considering the userdistribution (no overlapping users between train and test sets')
-    parser.add_argument('--type', choices=['binary', 'categorical'], default = 'categorical')
+    #parser.add_argument('--type', choices=['binary', 'categorical'], default = 'categorical')
     vector_type = "sswe"
     oversampling_rate = 3
     flag='binary'#parser.parse_args().type
     NO_OF_FOLDS = 5
     embed_size = 50
-    strategy = 3
+    strategy = 2
     run_model_exp4(oversampling_rate, vector_type, embed_size,strategy,flag)

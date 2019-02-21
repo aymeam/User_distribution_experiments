@@ -19,7 +19,7 @@ def run_model_exp1(oversampling_rate, vector_type, embed_size,flag):
         model_type = "blstm"
     
     x_text, labels = load_data('train')
-        
+    print(len(labels))    
     #Oversampling before cross-validation
     x_text, labels = oversampling(x_text, labels,oversampling_rate)
     

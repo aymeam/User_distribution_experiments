@@ -80,10 +80,6 @@ def train_LSTM_Holdout(tweets,X,y, model, inp_dim, weights, train_index, test_in
     temp = model.predict_on_batch(X_test)
     if flag != 'binary': 
         y_pred = np.argmax(temp, axis=1)
-        
-        #y_test = np.argmax(y_test, axis=1)
-        print(y_pred[0])
-        print(y_test[0])
     else:
         y_pred = []
         for i in temp:
@@ -92,9 +88,7 @@ def train_LSTM_Holdout(tweets,X,y, model, inp_dim, weights, train_index, test_in
             else:
                 y_pred.append(0)  
         
-        print(y_test_aux[0:50])
         y_test = []
-        print(y_test[0:100])
         for i in y_test_aux:
             if i >0.5:
                 y_test.append(1)
@@ -114,7 +108,7 @@ def train_LSTM_Holdout(tweets,X,y, model, inp_dim, weights, train_index, test_in
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='LSTM based models for twitter Hate speech detection')
-    parser.add_argument('-t', '--type',choices=['binary', 'categorical'], default = 'categorical')
+    parser.add_argument('-t', '--type',choices=['binary', 'categorical'], default = 'binary')
     
     TOKENIZER = 'glove'
     GLOVE_MODEL_FILE = 'glove.txt'
@@ -132,5 +126,5 @@ if __name__ == "__main__":
     print ('Allowing embedding learning: %s' %(str(LEARN_EMBEDDINGS)))
     flag = parser.parse_args().type
     word2vec_model = gensim.models.KeyedVectors.load_word2vec_format(GLOVE_MODEL_FILE)
-    strategy = 2
+    strategy = 3
     run_exp_4(flag, strategy)

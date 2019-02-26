@@ -51,5 +51,5 @@ if __name__ == "__main__":
     flag='binary'#parser.parse_args().type
     NO_OF_FOLDS = 5
     embed_size = 50
-    strategy = 2
+    strategy = 3
     run_model_exp4(oversampling_rate, vector_type, embed_size,strategy,flag)

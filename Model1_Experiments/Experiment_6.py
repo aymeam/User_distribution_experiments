@@ -50,17 +50,10 @@ def train_LSTM_Cross_Domain(tweets_train,tweets_test,X_train, y_train, X_test, y
                     class_weights[1] = np.where(y_temp == 1)[0].shape[0]/float(len(y_temp))
                     class_weights[2] = np.where(y_temp == 2)[0].shape[0]/float(len(y_temp))
 
-                try:
-                    if flag != 'binary':
-                        y_temp = np_utils.to_categorical(y_temp, num_classes=3)
-                except Exception as e:
-                    print (e)
-                #print (x.shape, y_temp.shape)
                 loss, acc = model.train_on_batch(x, y_temp, class_weight=class_weights)
                 #print (loss, acc)
                 
         temp = model.predict_on_batch(X_test)
-        #y_pred_aux = np.argmax(temp, axis=1)
         y_pred=[]
         for i in temp:
             if i[0] > 0.5:

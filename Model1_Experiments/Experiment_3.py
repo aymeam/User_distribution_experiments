@@ -19,11 +19,8 @@ def run_exp_3 (flag, strategy):
 
     data = pad_sequences(X_train, maxlen=MAX_SEQUENCE_LENGTH)
     data_test = pad_sequences(X_test, maxlen=MAX_SEQUENCE_LENGTH)
-    
-    if flag == 'binary':
-        model = lstm_model_bin(data.shape[1], EMBEDDING_DIM)
-    else:
-        model = lstm_model(data.shape[1], EMBEDDING_DIM)
+
+    model = lstm_model(data.shape[1], EMBEDDING_DIM)
 
     y_train = np.array(y_train)
     train_LSTM_Cross_Domain(tweets_train,tweets_test,data, y_train, data_test, y_test, model, EMBEDDING_DIM, W, 10)
@@ -35,10 +32,8 @@ def train_LSTM_Cross_Domain(tweets_train,tweets_test,X_train, y_train, X_test, y
         NO_OF_FOLDS = 1
         sentence_len = X_train.shape[1]
         batch_size =128
-        print("Counter test")
-        from collections import Counter
-        print(Counter(y_train))
 
+        
         y_train = np.array(y_train)
         y_train = y_train.reshape((len(y_train), 1))
         X_temp = np.hstack((X_train, y_train))
@@ -65,11 +60,13 @@ def train_LSTM_Cross_Domain(tweets_train,tweets_test,X_train, y_train, X_test, y
         temp = model.predict_on_batch(X_test)
         y_pred_aux = np.argmax(temp, axis=1)
         y_pred=[]
+        print(y_pred_aux)
         for i in y_pred_aux:
             if i == 2:
                 y_pred.append(1)
             else:
                 y_pred.append(i)
+                
         print (classification_report(y_test, y_pred))
         print (precision_recall_fscore_support(y_test, y_pred))
                 

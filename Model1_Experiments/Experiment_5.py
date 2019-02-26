@@ -12,7 +12,7 @@ from auxiliares import *
 
 def run_model_exp5(flag,strategy):        
     #Experimento 1 Cross-Validation
-    tweets,_ = select_tweets('sorted',strategy)
+    tweets,_ = select_tweets('sem_eval',strategy)
     vocab = gen_vocab(tweets)
     X, y = gen_sequence(tweets, vocab, flag)
     #Y = y.reshape((len(y), 1))
@@ -22,7 +22,6 @@ def run_model_exp5(flag,strategy):
     y = np.array(y)
     data, y = sklearn.utils.shuffle(data, y)
     W = get_embedding_weights()
-    print(data.shape)
     model = lstm_model_bin(data.shape[1], EMBEDDING_DIM)
     run_model_CV_wellDistributed(tweets,data, y, model, EMBEDDING_DIM, W, 10, 128,flag)
 
@@ -36,7 +35,6 @@ def run_model_CV_wellDistributed(tweets,X, y, model, inp_dim, weights,epochs,bat
 
     sentence_len = X.shape[1]
     print('run_model_CV_wellDistributed')
-    print(len(test_indexes))
     for test_index in test_indexes:
         if INITIALIZE_WEIGHTS_WITH == "glove":
             model.layers[0].set_weights([weights])
@@ -45,7 +43,6 @@ def run_model_CV_wellDistributed(tweets,X, y, model, inp_dim, weights,epochs,bat
         else:
             print ("ERROR!")
             return
-        print('SHAPES')
         X_train, y_train, X_test, y_test = [],[],[],[]
         for i in range(len(X)):
             if i in test_index:
@@ -54,6 +51,7 @@ def run_model_CV_wellDistributed(tweets,X, y, model, inp_dim, weights,epochs,bat
             else:
                 X_test.append(X[i])
                 y_test.append(y[i])
+                
         y_train = np.array(y_train)
         X_train = np.array(X_train)
         y_test = np.array(y_test)
@@ -72,13 +70,8 @@ def run_model_CV_wellDistributed(tweets,X, y, model, inp_dim, weights,epochs,bat
                     class_weights[1] = np.where(y_temp == 1)[0].shape[0]/float(len(y_temp))
                     class_weights[2] = np.where(y_temp == 2)[0].shape[0]/float(len(y_temp))
 
-                try:
-                    y_temp = y_temp#np_utils.to_categorical(y_temp, num_classes=3)
-                except Exception as e:
-                    print (e)
-                #print (x.shape, y_temp.shape)
                 loss, acc = model.train_on_batch(x, y_temp, class_weight=class_weights)
-                #print (loss, acc)
+         
         temp = model.predict_on_batch(X_test)
         y_pred = []
         for i in temp:
@@ -93,16 +86,13 @@ def run_model_CV_wellDistributed(tweets,X, y, model, inp_dim, weights,epochs,bat
         tweets_train = []
         tweets_test = []
         for i in range(len(tweets)):
-            print(tweets[i]['label'])
             if i in test_index:
                 tweets_test.append(tweets[i])
             else:
                 tweets_train.append(tweets[i])
-                print('siiiiiiiiiiiiii')
         X_train, y_train = gen_data(tweets_train,word2vec_model,flag)
         X_test, y_test = gen_data(tweets_test,word2vec_model,flag)
-        print(y_test)
-    
+   
         precision, recall, f1_score, acc, p_weighted, p_macro, r_weighted, r1_macro, f1_weighted, f11_macro = gradient_boosting_classifier([], wordEmb,[],[], X_train, y_train, X_test, y_test,flag)
         a += acc
         p += p_weighted
@@ -114,21 +104,7 @@ def run_model_CV_wellDistributed(tweets,X, y, model, inp_dim, weights,epochs,bat
         pn += precision
         rn += recall
         fn += f1_score
-    print ("None average results are:")
-    print (prod(pn, NO_OF_FOLDS))
-    print (prod(rn, NO_OF_FOLDS))
-    print (prod(fn, NO_OF_FOLDS))       
-    
-    print ("weighted results are")
-    print ("average accuracy is %f" %(a/NO_OF_FOLDS))
-    print ("average precision is %f" %(p/NO_OF_FOLDS))
-    print ("average recall is %f" %(r/NO_OF_FOLDS))
-    print ("average f1 is %f" %(f1/NO_OF_FOLDS))
-
-    print ("macro results are")
-    print ("average precision is %f" %(p1/NO_OF_FOLDS))
-    print ("average recall is %f" %(r1/NO_OF_FOLDS))
-    print ("average f1 is %f" %(f11/NO_OF_FOLDS))
+    print_scores(p, p1, r,r1, f1, f11,pn, rn, fn,NO_OF_FOLDS)
 
 if __name__ == "__main__":
     vector_type = "sswe"

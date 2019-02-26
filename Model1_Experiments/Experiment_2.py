@@ -76,8 +76,10 @@ def train_LSTM_OK(tweets,X, y, model, inp_dim, weights, epochs, batch_size,flag)
                 tweets_test.append(tweets[i])
             else:
                 tweets_train.append(tweets[i])
+                
         X_train, y_train = gen_data(tweets_train,word2vec_model,flag)
         X_test, y_test = gen_data(tweets_test,word2vec_model,flag)
+        
         precision, recall, f1_score, acc, p_weighted, p_macro, r_weighted, r1_macro, f1_weighted, f11_macro = gradient_boosting_classifier(tweets, wordEmb,train_index,test_index, X_train, y_train, X_test, y_test,flag)
         a += acc
         p += p_weighted

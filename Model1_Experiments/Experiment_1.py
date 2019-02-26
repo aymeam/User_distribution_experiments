@@ -57,6 +57,7 @@ def train_LSTM_variante1(tweets,X, y, model, inp_dim, weights, epochs, batch_siz
                 tweets_test.append(tweets[i])
             else:
                 tweets_train.append(tweets[i])
+                
         X_train, y_train = gen_data(tweets_train,word2vec_model,flag)
         X_test, y_test = gen_data(tweets_test,word2vec_model,flag)
 
@@ -72,7 +73,7 @@ def train_LSTM_variante1(tweets,X, y, model, inp_dim, weights, epochs, batch_siz
         rn += recall
         fn += f1_score
         
-    print_scores(p, p1, r,r1, f1, f11,pn, rn, fn,NO_OF_FOLDS)    
+    print_scores(p, p1, r,r1, f1, f11,pn, rn, fn, NO_OF_FOLDS)    
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='LSTM based models for twitter Hate speech detection')

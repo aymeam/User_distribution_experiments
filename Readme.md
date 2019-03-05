@@ -5,16 +5,18 @@ In this work we use three different datasets:
 This dataset is describe in Waseem and Hovy [1] and can be download at http://github.com/zeerakw/hatespeech. 
 
 #### 2. Davidson et al. dataset
+This dataset is describe in Davidson et al. [4] and can be download at 
+https://github.com/t-davidson/ hate-speech-and-offensive-language
 
 #### 3. SemEval dataset
+This dataset is describe in Basile et al. [5].
 
-## Experiments Description and Instructions to run
+## Experiments Description
+In this work, we take a close look at the experimental methodology utilized for achieving the results described by two state-of-the-art methods. 
+In the Model1_Experiments and Model2_Experiments folders are the code of our experiments using the Bdjatiya et al. models and Agrawal and Awekar models respectively.
+
 ### Experiment 1
 We reproduced the Agrawal and Awekar [3] and Badjatiya et al. [2] best reported models, following closely their paper description and the companion code.
-To run the Experiment for one and other method you can run:
-```
-$python Experiment_1.py
-```
 ### Experiment 2
 In this experiment we take into account the issues we observed in the original implementation and modified the code consequently.
 #### Agrawal and Awekar model
@@ -23,26 +25,31 @@ We re-conducted the same method proposed by Agrawal and Awekar [1] but this time
 We re-run thesame method proposed by Badjatiya et al. [2] but this timeextracting features only from the set train (by using the LSTM-based architecture), then training the GBDT classifierwith these features over the same set train, and reporting all the metrics over the ttest.
 ### Experiment 3
 To estimate how well do these models generalize to other dataset from the same domain, evaluate those models –generated on the complete Waseem & Hovy dataset on the SemEval2019 dataset.
-To run the Experiment for one and other method you can run:
-```
-$python Experiment_3.py
-```
 ### Experiment 4
 We partitioned the Wassem & Hovy dataset into trainning and testing sets, ensuring that no user is repeated between train and test set, and also ensuring at least an 85% of tweets of each class are in the train set. 
 To run the Experiment for one and other method you can run:
-```
-$python Experiment_3.py
-```
 ### Experiment 5
 In this experiment we perform a 10-fold cross validation considering partitions with no overlapping users between the train and test sets using the enriched dataset.
-
 ### Experiment 6
 To corroborate the generalization of the resulting model we use our newly created dataset to train the modelsproposed by Badjatiya et al. [2] and by Agrawal and Awekar[1]. Then we evaluate these models on previously unseen data by classifying tweets in the SemEval 2019 set.
 
+## Instructions to run
+Before running the model, you have to setup the input datasets in the folder named data.
+To run the experiments
+```
+$python ModelX_Experiments/Experiment_X.py
+```
+For example, to run the Experiment 1 with the Badjatiya et al. models you have to run:
+```
+$python Model1_Experiments/Experiment_1.py
+```
+To run the Experiment 1 with the Agrawal and Awekar models you have to run:
+```
+$python Model2_Experiments/Experiment_1.py
+```
 ### References
 
 [1] Z. Waseem, D. Hovy _Hateful Symbols or Hateful People\? Predictive Features for Hate Speech on Detection on Twitter_
-
 ```                    
 @inproceedings{DBLP:conf/naacl/HeeaseemH16,
   author    = {Zeerak Waseem and

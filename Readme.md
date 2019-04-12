@@ -1,15 +1,12 @@
 # Readme
+
 ## Datasets
-In this work we use three different datasets:
-#### 1.  Waseem and Hovy dataset
-This dataset is describe in Waseem and Hovy [1] and can be download at http://github.com/zeerakw/hatespeech. 
+In this work we use three different datasets. We used the trainning English dataset of the SemEval 2019 Task5 [5]. Please download the dataset and unzip at Data/ from https://goo.gl/forms/UPD2m8isvXMTvXV73.
+The second dataset is the one costructed by Wassem and Hovy [1], they made public the twwets ID and labels and we recovered the information using the Twitter API. A third dataset was constructed by us, using part of the Waseem and Hovy dataset, and part of the dataset describe in Davidson et al. [4]. To get this datasets ready for used you have to run the following command:
 
-#### 2. Davidson et al. dataset
-This dataset is describe in Davidson et al. [4] and can be download at 
-https://github.com/t-davidson/ hate-speech-and-offensive-language
+$python Download_Data.py   -ct 'consumer_token' -cs 'consumer_secret' -at 'access_token' -ats 'access_token_secret'
 
-#### 3. SemEval dataset
-This dataset is describe in Basile et al. [5].
+Where consumer_token, consumer_secret, access_token and access_token_secret are the corresponding credentials to use the Twitter API.
 
 ## Experiments Description
 In this work, we take a close look at the experimental methodology utilized for achieving the results described by two state-of-the-art methods. 

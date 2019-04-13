@@ -3,7 +3,7 @@ In the present paper, we focus on the experimental methodology used by two state
 We analyze the methodology implemented in these works and how they can be generalized to other datasets. The results of our research evidence methodological problems, and a relevant dataset bias. Consequently, performance claims of the current state-of-the-art have become overestimated. The issues that we have encountered are mostly due to the overfitting of data and sampling issues. We make an analysis of the implications for current research and reconducte experiments to give a more accurate idea of the current state-of-the art methods 
 
 ## Datasets
-In this work we use three different datasets. We used the trainning English dataset of the SemEval 2019 Task5 [5]. Please download the dataset and unzip at Data/ from https://goo.gl/forms/UPD2m8isvXMTvXV73.
+In this work we use three different datasets. We used the trainning English dataset of the SemEval 2019 Task5 [5]. Please download the dataset and unzip at Data/ from [here](https://goo.gl/forms/UPD2m8isvXMTvXV73) .
 
 The second dataset is the one costructed by Wassem and Hovy [1], they made the twwets ID and labels public and we recovered the information using the Twitter API. 
 
@@ -14,6 +14,12 @@ $python Download_Data.py   -ct 'consumer_token' -cs 'consumer_secret' -at 'acces
 ```
 
 Where consumer_token, consumer_secret, access_token and access_token_secret are the corresponding credentials to use the Twitter API.
+
+## Word vectors
+We have also used two different kind of embeddings for initialization which can be found at the mentioned links.
+
+
+[Sentiment Specific word embeddings (SSWE)](ihttp://ir.hit.edu.cn/~dytang/paper/sswe/embedding-results.zip) 
 <!-- 
 ## Description of the Experiments 
 ### Experiment 1

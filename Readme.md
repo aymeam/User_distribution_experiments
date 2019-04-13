@@ -1,17 +1,18 @@
 # Readme
+In the present paper, we focus on the experimental methodology used by two state-of-the-art methods, Badjatiya et al. [2], and Agrawal and Awekar [3].
+We analyze the methodology implemented in these works and how they can be generalized to other datasets. The results of our research evidence methodological problems, and a relevant dataset bias. Consequently, performance claims of the current state-of-the-art have become overestimated. The issues that we have encountered are mostly due to the overfitting of data and sampling issues. We make an analysis of the implications for current research and reconducte experiments to give a more accurate idea of the current state-of-the art methods 
 
 ## Datasets
 In this work we use three different datasets. We used the trainning English dataset of the SemEval 2019 Task5 [5]. Please download the dataset and unzip at Data/ from https://goo.gl/forms/UPD2m8isvXMTvXV73.
-The second dataset is the one costructed by Wassem and Hovy [1], they made public the twwets ID and labels and we recovered the information using the Twitter API. A third dataset was constructed by us, using part of the Waseem and Hovy dataset, and part of the dataset describe in Davidson et al. [4]. To get this datasets ready for used you have to run the following command:
+The second dataset is the one costructed by Wassem and Hovy [1], they made the twwets ID and labels public and we recovered the information using the Twitter API. A third dataset was constructed by us, using part of the Waseem and Hovy dataset, and part of the dataset described in Davidson et al. [4]. To get this datasets ready for use you have to run the following command:
 
+```
 $python Download_Data.py   -ct 'consumer_token' -cs 'consumer_secret' -at 'access_token' -ats 'access_token_secret'
+```
 
 Where consumer_token, consumer_secret, access_token and access_token_secret are the corresponding credentials to use the Twitter API.
-
-## Experiments Description
-In this work, we take a close look at the experimental methodology utilized for achieving the results described by two state-of-the-art methods. 
-In the Model1_Experiments and Model2_Experiments folders are the code of our experiments using the Bdjatiya et al. models and Agrawal and Awekar models respectively.
-
+<!-- 
+## Description of the Experiments 
 ### Experiment 1
 We reproduced the Agrawal and Awekar [3] and Badjatiya et al. [2] best reported models, following closely their paper description and the companion code.
 ### Experiment 2
@@ -28,7 +29,7 @@ To run the Experiment for one and other method you can run:
 ### Experiment 5
 In this experiment we perform a 10-fold cross validation considering partitions with no overlapping users between the train and test sets using the enriched dataset.
 ### Experiment 6
-To corroborate the generalization of the resulting model we use our newly created dataset to train the modelsproposed by Badjatiya et al. [2] and by Agrawal and Awekar[1]. Then we evaluate these models on previously unseen data by classifying tweets in the SemEval 2019 set.
+To corroborate the generalization of the resulting model we use our newly created dataset to train the modelsproposed by Badjatiya et al. [2] and by Agrawal and Awekar[1]. Then we evaluate these models on previously unseen data by classifying tweets in the SemEval 2019 set. -->
 
 ## Instructions to run
 Before running the model, you have to setup the input datasets in the folder named data.

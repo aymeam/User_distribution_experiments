@@ -35,8 +35,7 @@ In this experiment we perform a 10-fold cross validation considering partitions 
 To corroborate the generalization of the resulting model we use our newly created dataset to train the modelsproposed by Badjatiya et al. [2] and by Agrawal and Awekar[1]. Then we evaluate these models on previously unseen data by classifying tweets in the SemEval 2019 set. -->
 
 ## Instructions to run
-Before running the model, you have to setup the input datasets in the folder named data.
-To run the experiments
+After running the previous command and download an unzip the SemEval dataset, you are able to run the experiments running the following command:
 ```
 $python ModelX_Experiments/Experiment_X.py
 ```

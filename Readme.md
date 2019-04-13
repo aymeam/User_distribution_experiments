@@ -4,7 +4,10 @@ We analyze the methodology implemented in these works and how they can be genera
 
 ## Datasets
 In this work we use three different datasets. We used the trainning English dataset of the SemEval 2019 Task5 [5]. Please download the dataset and unzip at Data/ from https://goo.gl/forms/UPD2m8isvXMTvXV73.
-The second dataset is the one costructed by Wassem and Hovy [1], they made the twwets ID and labels public and we recovered the information using the Twitter API. A third dataset was constructed by us, using part of the Waseem and Hovy dataset, and part of the dataset described in Davidson et al. [4]. To get this datasets ready for use you have to run the following command:
+
+The second dataset is the one costructed by Wassem and Hovy [1], they made the twwets ID and labels public and we recovered the information using the Twitter API. 
+
+A third dataset was constructed by us, using part of the Waseem and Hovy dataset, and part of the dataset described in Davidson et al. [4]. To get this datasets ready for use you have to run the following command:
 
 ```
 $python Download_Data.py   -ct 'consumer_token' -cs 'consumer_secret' -at 'access_token' -ats 'access_token_secret'

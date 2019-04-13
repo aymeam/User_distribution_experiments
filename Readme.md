@@ -17,7 +17,7 @@ Where consumer_token, consumer_secret, access_token and access_token_secret are 
 
 ## Word vectors
 Fro these experiments we have also used embeddings for initialization which can be found at:
-[Sentiment Specific word embeddings (SSWE)](ihttp://ir.hit.edu.cn/~dytang/paper/sswe/embedding-results.zip) 
+[Sentiment Specific word embeddings (SSWE)](http://ir.hit.edu.cn/~dytang/paper/sswe/embedding-results.zip) 
 <!-- 
 ## Description of the Experiments 
 ### Experiment 1

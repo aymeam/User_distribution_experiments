@@ -16,8 +16,11 @@ $python Download_Data.py   -ct 'consumer_token' -cs 'consumer_secret' -at 'acces
 Where consumer_token, consumer_secret, access_token and access_token_secret are the corresponding credentials to use the Twitter API.
 
 ## Word vectors
-Fro these experiments we have also used embeddings for initialization which can be found at:
+For these experiments we have also used embeddings for initialization which can be found in:
+
 [Sentiment Specific word embeddings (SSWE)](http://ir.hit.edu.cn/~dytang/paper/sswe/embedding-results.zip) 
+
+Please download and unzip the vectors at Vectors/ 
 <!-- 
 ## Description of the Experiments 
 ### Experiment 1

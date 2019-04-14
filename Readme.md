@@ -1,5 +1,5 @@
 # Readme
-In the present paper, we focus on the experimental methodology used by two state-of-the-art methods, Badjatiya et al. [2], and Agrawal and Awekar [3].
+In this work, we focus on the experimental methodology used by two state-of-the-art methods, Badjatiya et al. [2], and Agrawal and Awekar [3].
 We analyze the methodology implemented in these works and how they can be generalized to other datasets. The results of our research evidence methodological problems, and a relevant dataset bias. Consequently, performance claims of the current state-of-the-art have become overestimated. The issues that we have encountered are mostly due to the overfitting of data and sampling issues. We make an analysis of the implications for current research and reconducte experiments to give a more accurate idea of the current state-of-the art methods 
 
 ## Datasets

@@ -5,9 +5,9 @@ We analyze the methodology implemented in these works and how they can be genera
 ## Datasets
 In this work we use three different datasets. We used the trainning English dataset of the SemEval 2019 Task5 [5]. Please download the dataset and unzip at Data/ from [here](https://goo.gl/forms/UPD2m8isvXMTvXV73) .
 
-The second dataset is the one costructed by Wassem and Hovy [1], they made the twwets ID and labels public and we recovered the information using the Twitter API. 
+The second dataset is the one costructed by Wassem and Hovy [1], they made the tweets ID and labels public and we recovered the information using the Twitter API. 
 
-A third dataset was constructed by us, using part of the Waseem and Hovy dataset, and part of the dataset described in Davidson et al. [4]. To get this datasets ready for use you have to run the following command:
+A third dataset was constructed by us, using part of the Waseem and Hovy dataset, and part of the dataset described in Davidson et al. [4]. To get these datasets ready for use you have to run the following command:
 
 ```
 $python Download_Data.py   -ct 'consumer_token' -cs 'consumer_secret' -at 'access_token' -ats 'access_token_secret'
@@ -57,15 +57,15 @@ In this experiment we perform a 10-fold cross validation considering partitions 
 To corroborate the generalization of the resulting model we use our newly created dataset to train the modelsproposed by Badjatiya et al. [2] and by Agrawal and Awekar[1]. Then we evaluate these models on previously unseen data by classifying tweets in the SemEval 2019 set. -->
 
 ## Instructions to run
-After running the previous command and download an unzip the SemEval dataset, you are able to run the experiments running the following command:
+After running the previous command and download an unzip the SemEval dataset, you will be able to run the experiments running the following command:
 ```
 $python ModelX_Experiments/Experiment_X.py
 ```
-For example, to run the Experiment 1 with the Badjatiya et al. models you have to run:
+For example, to run the Experiment 1 with the models of Badjatiya et al. you have to run:
 ```
 $python Model1_Experiments/Experiment_1.py
 ```
-To run the Experiment 1 with the Agrawal and Awekar models you have to run:
+To run the Experiment 1 with the models of Agrawal and Awekar you have to run:
 ```
 $python Model2_Experiments/Experiment_1.py
 ```

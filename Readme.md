@@ -2,11 +2,11 @@
 ## Datasets
 In this work we use three different datasets:
 #### 1.  Waseem and Hovy dataset
-This dataset is describe in Waseem and Hovy [1] and can be download at http://github.com/zeerakw/hatespeech. 
+This dataset is described in [1] and can be download at http://github.com/zeerakw/hatespeech. We also added some functionality to download this dataset (see the [Instructions to run](#instructions-to-run))
 
 #### 2. Davidson et al. dataset
-This dataset is describe in Davidson et al. [4] and can be download at 
-https://github.com/t-davidson/ hate-speech-and-offensive-language
+This dataset is describe in [4] and can be download at 
+https://github.com/t-davidson/hate-speech-and-offensive-language
 
 #### 3. SemEval dataset
 This dataset is describe in Basile et al. [5].

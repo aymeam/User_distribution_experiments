@@ -5,8 +5,6 @@ from sklearn.metrics import accuracy_score
 from keras.preprocessing.sequence import pad_sequences
 from keras.layers import Embedding, Input, LSTM
 from keras.models import Sequential, Model
-from keras.layers import Activation, Dense, Dropout, Embedding, Flatten, Input, Convolution1D, MaxPooling1D, GlobalMaxPooling1D
-import numpy as np
 import pdb
 import pickle
 from sklearn.metrics import make_scorer, f1_score, accuracy_score, recall_score, precision_score, classification_report, precision_recall_fscore_support
@@ -65,8 +63,8 @@ def gradient_boosting_classifier(X_train, y_train, X_test, y_test, flag):
             else:
                 y_pred.append(i)
 
-#     print (classification_report(y_test, y_pred))
-#     print (precision_recall_fscore_support(y_test, y_pred))
+    print (classification_report(y_test, y_pred))
+    print (precision_recall_fscore_support(y_test, y_pred))
     
     a = accuracy_score (y_test, y_pred)
     precision = precision_score(y_test, y_pred, average=None)
@@ -184,40 +182,6 @@ def select_tweets(dataset,strategy):
             tweet_return.append(tweet)
     #pdb.set_trace()
     return tweet_return,users_none
-
-def lstm_model_bin(sequence_length, embedding_dim):
-    model_variation = 'LSTM'
-    print('Model variation is %s' % model_variation)
-    model = Sequential()
-    print('variables')
-    print(embedding_dim)
-    print(sequence_length)
-    model.add(Embedding(len(vocab)+1, embedding_dim, input_length=sequence_length, trainable=LEARN_EMBEDDINGS))
-    model.add(Dropout(0.25))#, input_shape=(sequence_length, embedding_dim)))
-    model.add(LSTM(embedding_dim))#, input_shape=(sequence_length, embedding_dim)))
-    model.add(Dropout(0.5))
-    model.add(Dense(1))
-    model.add(Activation('sigmoid'))
-    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-    print (model.summary())
-    return model    
-    
-def lstm_model(sequence_length, embedding_dim):
-    model_variation = 'LSTM'
-    print('Model variation is %s' % model_variation)
-    model = Sequential()
-    print('variables')
-    print(embedding_dim)
-    print(sequence_length)
-    model.add(Embedding(len(vocab)+1, embedding_dim, input_length=sequence_length, trainable=LEARN_EMBEDDINGS))
-    model.add(Dropout(0.25))#, input_shape=(sequence_length, embedding_dim)))
-    model.add(LSTM(embedding_dim))#, input_shape=(sequence_length, embedding_dim)))
-    model.add(Dropout(0.5))
-    model.add(Dense(3))
-    model.add(Activation('softmax'))
-    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-    print (model.summary())
-    return model
 
 def prod(list, num):
     res=[]
@@ -345,7 +309,7 @@ def cv_sorted_data(x_text):
 def get_data_waseem4(dataset, s):
     tweets=[]
     if dataset == 'data_new':
-        data = pickle.load(open('tweet_data/data_sorted.pkl', 'rb'))
+        data = pickle.load(open('../Data/Data_new.pkl', 'rb'))
     elif dataset == 'waseem':
         data = pickle.load(open('../Data/Waseem_Dataset.pkl', 'rb'))
     elif dataset == 'sem_eval':

@@ -7,7 +7,7 @@ from tweepy import Stream
 from tweepy.streaming import StreamListener
 import argparse
 import pickle
-
+        
 def save_object(obj, filename):
     with open(filename, 'wb') as fp:
         pickle.dump(obj, fp)
@@ -42,7 +42,9 @@ def Descargar_Datos(consumer_token,consumer_secret,access_token,access_token_sec
             except: 
                 pass
         print(str(c) + ' tweets downloaded')
-        save_object(str_json, '.\Data\' + names[current_file] + '.pkl')
+
+        name_file =  names[current_file] + '.pkl'
+        save_object(str_json, name_file)
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Descargar datos usando el api de twitter')

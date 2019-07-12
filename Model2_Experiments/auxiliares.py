@@ -24,25 +24,16 @@ import operator
 from sklearn.metrics import precision_recall_fscore_support
 from sklearn.metrics import accuracy_score
 import random
-from auxiliares import *
+from models import *
 
-import argparse
 import keras
 from sklearn.metrics import accuracy_score
 from keras.preprocessing.sequence import pad_sequences
 from keras.layers import Embedding, Input, LSTM
 from keras.models import Sequential, Model
 from keras.layers import Activation, Dense, Dropout, Embedding, Flatten, Input, Convolution1D, MaxPooling1D, GlobalMaxPooling1D
-import numpy as np
-import pdb
-import pandas as pd
-import pickle
-from tensorflow.contrib import learn
 MAX_FEATURES = 2
-from tflearn.data_utils import to_categorical, pad_sequences
 from sklearn.model_selection import KFold
-import tflearn
-import numpy as np
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 from tflearn.layers.core import input_data, dropout, fully_connected
@@ -50,29 +41,17 @@ from tflearn.layers.conv import conv_1d, global_max_pool
 from tflearn.layers.merge_ops import merge
 from tflearn.layers.estimator import regression
 import tensorflow as tf
-import os
-#os.environ['KERAS_BACKEND']='theano'
-from keras.layers import Embedding
-from keras.layers import Dense, Input, Flatten
-from keras.layers import Conv1D, MaxPooling1D, Embedding, Dropout, LSTM, GRU, Bidirectional
-from keras.models import Model,Sequential
 
 from keras import backend as K
 from keras.engine.topology import Layer, InputSpec
 from keras import initializers, optimizers
-from sklearn.metrics import make_scorer, f1_score, accuracy_score, recall_score, precision_score, classification_report, precision_recall_fscore_support
-from sklearn.ensemble  import GradientBoostingClassifier, RandomForestClassifier
 from gensim.parsing.preprocessing import STOPWORDS
-from sklearn.model_selection import KFold, StratifiedKFold
 from keras.utils import np_utils
 import codecs
-import operator
 import gensim, sklearn
 from string import punctuation
 from collections import defaultdict
-#from batch_gen import batch_gen
 import sys
-from auxiliares import *
 #rom nltk import tokenize as tokenize_nltk
 #from my_tokenizer import glove_tokenize
 
@@ -164,29 +143,45 @@ def evaluate_model(model, testX, testY,flag):
     print("Recall: " + str(recall) + "\n")
     print("f1_score: " + str(f1_score) + "\n")
     print(confusion_matrix(y_true, y_pred))
+    
     print(":: Classification Report")
     print(classification_report(y_true, y_pred))
+    def save_object(obj, filename):
+        with open(filename, 'wb') as fp:
+            pickle.dump(obj, fp)
+
+    def load_object(filename):
+        with open(filename, 'rb') as fp:
+            obj = pickle.load(fp)
+        return obj
+    save_object(y_pred, 'y_pred_texto.pkl')
     return precision, recall, f1_score,precisionw, recallw, f1_scorew,precisionm, recallm, f1_scorem
 
 def load_data(dataset):
+    x_text = []
+    labels = []
     if dataset =='train':
         print("Loading data from file: " + dataset)
-        data = pickle.load(open('DatosCSV/waseem3.pkl', 'rb'))
+        data = pickle.load(open('../Data/Data_new.pkl', 'rb'))
+        print('len(dataaaaaa)')
+        print(len(data))
     elif dataset == 'test':
         print("Loading data from file: " + dataset)
-        #data = pickle.load(open('DatosCSV/twitter_data_davidson.pkl', 'rb'))    
-        data = pickle.load(open('DatosCSV/sem_eval.pkl', 'rb'))   
+#         with open('../Data/train_en.tsv', 'r', encoding = 'utf-8') as sem_file:
+#             data = sem_file.readlines()
+        data = pickle.load(open('../Data/SemEval_Dataset.pkl', 'rb'))
+        print(data[0])
+  
     elif dataset == 'data_new':
         print("Loading data from file: " + dataset)
-        data = pickle.load(open('DatosCSV/data_new.pkl', 'rb')) 
-    elif dataset == 'data_sorted':
-        print("Loading data from file: " + dataset)
-        data = pickle.load(open('DatosCSV/data_sorted.pkl', 'rb')) 
-    x_text = []
-    labels = [] 
+        data = pickle.load(open('../Data/Data_new.pkl', 'rb')) 
+ 
     for i in range(len(data)):
         x_text.append(data[i]['text'])
         labels.append(data[i]['label'])
+
+    from collections import Counter
+    print(Counter(labels))
     return x_text, labels
 
 def data_processor(x_text,X_train,y_train,X_test,y_test,flag):
@@ -194,7 +189,11 @@ def data_processor(x_text,X_train,y_train,X_test,y_test,flag):
     post_length = np.array([len(x.split(" ")) for x in x_text])
     max_document_length = max(post_length)
     print("Document length : " + str(max_document_length))
-    
+    y_map = {
+        'none': 0,
+        'racism': 1,
+        'sexism': 2,
+        'hate':1}
     vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length, MAX_FEATURES)
     vocab_processor = vocab_processor.fit(x_text)
 
@@ -206,7 +205,10 @@ def data_processor(x_text,X_train,y_train,X_test,y_test,flag):
     
     trainX = np.array(list(vocab_processor.transform(X_train)))
     testX = np.array(list(vocab_processor.transform(X_test)))
-
+     
+    
+    print('trainX[0]')
+    print(trainX[0])
     trainY = np.asarray(y_train)
     testY = np.asarray(y_test)
 
@@ -228,33 +230,8 @@ def data_processor(x_text,X_train,y_train,X_test,y_test,flag):
             "testY" : testY,
             "vocab_processor" : vocab_processor
         }
+
     return data_dict
-
-def blstm(inp_dim,vocab_size, embed_size, num_classes, learn_rate):   
-#     K.clear_session()
-    model = Sequential()
-    model.add(Embedding(vocab_size, embed_size, input_length=inp_dim, trainable=True))
-    model.add(Dropout(0.25))
-    model.add(Bidirectional(LSTM(embed_size)))
-    model.add(Dropout(0.50))
-    model.add(Dense(3, activation='softmax'))
-    model.compile(loss='categorical_crossentropy',
-              optimizer='adam',
-              metrics=['accuracy'])
-    return model
-
-def binary_blstm(inp_dim,vocab_size, embed_size, num_classes, learn_rate):   
-#     K.clear_session()
-    model = Sequential()
-    model.add(Embedding(vocab_size, embed_size, input_length=inp_dim, trainable=True))
-    model.add(Dropout(0.25))
-    model.add(Bidirectional(LSTM(embed_size)))
-    model.add(Dropout(0.50))
-    model.add(Dense(1, activation='sigmoid'))
-    model.compile(loss='binary_crossentropy',
-              optimizer='adam',
-              metrics=['accuracy'])
-    return model
 
 def get_model(m_type,inp_dim, vocab_size, embed_size, num_classes, learn_rate):
     if m_type == 'cnn':
@@ -302,23 +279,14 @@ def train(data_dict, model_type, vector_type,flag, embed_size, dump_embeddings=F
     initial_weights = model.get_weights()
     shuffle_weights(model, initial_weights)
     
-    if(model_type == 'cnn'):
-        if(vector_type!="random"):
-            print("Word vectors used: " + vector_type)
-            embeddingWeights = tflearn.get_layer_variables_by_name('EmbeddingLayer')[0]
-            model.set_weights(embeddingWeights, map_embedding_weights(get_embeddings_dict(vector_type, embed_size), vocab, embed_size))
-            model.fit(trainX, trainY, n_epoch = EPOCHS, shuffle=True, show_metric=True, batch_size=BATCH_SIZE)
-        else:
-            model.fit(trainX, trainY, n_epoch = EPOCHS, shuffle=True, show_metric=True, batch_size=BATCH_SIZE)
+    if(vector_type!="random"):
+        print("Word vectors used: " + vector_type)
+        model.layers[0].set_weights([map_embedding_weights(get_embeddings_dict(vector_type, embed_size), vocab, embed_size)])
+        model.fit(trainX, trainY, epochs=EPOCHS, shuffle=True, batch_size=BATCH_SIZE, 
+              verbose=1)
     else:
-        if(vector_type!="random"):
-            print("Word vectors used: " + vector_type)
-            model.layers[0].set_weights([map_embedding_weights(get_embeddings_dict(vector_type, embed_size), vocab, embed_size)])
-            model.fit(trainX, trainY, epochs=EPOCHS, shuffle=True, batch_size=BATCH_SIZE, 
-                  verbose=1)
-        else:
-            model.fit(trainX, trainY, epochs=EPOCHS, shuffle=True, batch_size=BATCH_SIZE, 
-                  verbose=1)
+        model.fit(trainX, trainY, epochs=EPOCHS, shuffle=True, batch_size=BATCH_SIZE, 
+              verbose=1)
             
     if (dump_embeddings==True):
         if(model_type == 'cnn'):
@@ -370,7 +338,7 @@ def get_embeddings_dict(vector_type, emb_dim):
     if vector_type == 'sswe':
         emb_dim==50
         sep = '\t'
-        vector_file = 'word_vectors/sswe-u.txt'
+        vector_file = '../Vectors/sswe-u.txt'
     elif vector_type =="glove":
         sep = ' '
         if data == "wiki":
@@ -389,9 +357,19 @@ def gen_sequence(tweets):
             'none': 0,
             'racism': 1,
             'sexism': 2,
-            'hate' :1
+            'hate':1
+#             'both': 1,
+#             'abusive': 1,
+#             'ofenssive': 1,
+#             'normal': 0,
+#             'neither': 0,
+#             'hateful': 1,
+#             'abusive': 1,
+#             '1':1,
+#             '0':0,
+#              1:1,
+ #            0:0
             }
-
     X, y = [], []
     for tweet in tweets:
         text = tokenize_nltk.casual.TweetTokenizer(strip_handles=True, reduce_len=True).tokenize(tweet['text'].lower())
@@ -407,6 +385,24 @@ def gen_sequence(tweets):
     return X, y
 
 def oversampling(x_text, labels,oversampling_rate):
+    y_map = {
+        'none': 0,
+        'racism': 1,
+        'sexism': 2,
+        'hate':1,
+#         'both': 1,
+#         'abusive': 1,
+#         'ofenssive': 1,
+#         'normal': 0,
+#         'neither': 0,
+#         'hateful': 1,
+#         'abusive': 1,
+#         '1':1,
+#         '0':0,
+#          1:1,
+#          0:0,
+#          2:2
+        }
     dict1 = {'sexism':2,'racism':1,'none':0,'hate':1}
     #NUM_CLASSES = 1
     labels = [dict1[b] for b in labels]
@@ -425,26 +421,30 @@ def cv_sorted_data(x_text):
     for i in range(len(x_text)):
         if i >=0 and i <700:
             part0.append(i)
-        elif i >700 and i <1400:
+        elif i >=700 and i <1400:
             part1.append(i)
+
         elif i >=1400 and i <2100:   
             part2.append(i)
+
         elif i >=2100 and i <2800:
             part3.append(i)
-        elif i >=2800 and i <3500:
+
+        elif i >=2800 and i <3494:
             part4.append(i)
-        elif i >=3500 and i <4200:
+
+        elif i >=3494 and i <4198:
             part5.append(i)
-        elif i >=4200 and i <4900:
+        elif i >=4198 and i <4897:
             part6.append(i)
-        elif i >=4900 and i <5600:
+        elif i >=4897 and i <5599:
             part7.append(i)
-        elif i >=5600 and i <6300:
-            part8.append(i)
-        elif i >=6300 and i <7006:
-            part9.append(i)
             
-    train_indexes.append(part9) 
+        elif i >=5599 and i <6299:
+            part8.append(i)
+            
+        elif i >=6299 and i <7006:
+            part9.append(i)
     train_indexes.append(part0) 
     train_indexes.append(part1) 
     train_indexes.append(part2) 
@@ -454,11 +454,21 @@ def cv_sorted_data(x_text):
     train_indexes.append(part6) 
     train_indexes.append(part7) 
     train_indexes.append(part8) 
-    return train_indexes    
-    
+    train_indexes.append(part9) 
+
+    return train_indexes  
+
 def get_data_waseem3(s):
     tweets=[]
-    data = pickle.load(open('DatosCSV/waseem3.pkl', 'rb'))
+    data = pickle.load(open('../Data/Waseem_Dataset.pkl', 'rb'))
+    for tweet_full in data:
+    #tweet_full = json.loads(line)
+        tweets.append({
+            'id': tweet_full['id'],
+            'name': tweet_full['name'],
+            'text': tweet_full['text'].lower(),
+            'label': tweet_full['label'],
+            })
     Odiosos=[]
     none=0
     dict_users_none={}
@@ -481,12 +491,14 @@ def get_data_waseem3(s):
                 dict_users_none[tweet_full['name']] += 1
             else:
                 dict_users_none[tweet_full['name']] = 1 
+                
         if tweet_full['label'] == 'sexism':
             none+=1
             if tweet_full['name'] in dict_users_sexist.keys():
                 dict_users_sexist[tweet_full['name']] += 1
             else:
                 dict_users_sexist[tweet_full['name']] = 1 
+                
         if tweet_full['label'] == 'racism':
             none+=1
             if tweet_full['name'] in dict_users_racist.keys():
@@ -494,31 +506,40 @@ def get_data_waseem3(s):
             else:
                 dict_users_racist[tweet_full['name']] = 1 
                 
+    resultado = sorted(dict_users_none.items(), key=operator.itemgetter(1))
+    resultado.reverse()
+    
+    users_train = []
+    for i in resultado[:1400]:
+        if i[0] not in Odiosos:
+            users_train.append(i[0])
+
+
     None_users = sorted(dict_users_none.items(), key=operator.itemgetter(1))
     None_users.reverse()
     Sexist_users = sorted(dict_users_sexist.items(), key=operator.itemgetter(1))
     Sexist_users.reverse()
     Racist_users = sorted(dict_users_racist.items(), key=operator.itemgetter(1))
-    Racist_users.reverse()
-
-    users_train = []
-    for i in None_users[0:1400]:
-        if i[0] not in Odiosos:
-            users_train.append(i[0])
-    print(users_train[0])
+    Racist_users.reverse()         
     if strategy == 1:
         print('strategy')
         print(strategy)
-        print(Racist_users[0][0])
         t = [Sexist_users[0][0],Racist_users[0][0],Sexist_users[1][0]]
         for i in t:
             users_train.append(i)
+            
+        resultado = sorted(dict_users_sexist.items(), key=operator.itemgetter(1))
+        resultado.reverse()
+
+
+        resultado = sorted(dict_users_racist.items(), key=operator.itemgetter(1))
+        resultado.reverse()
+
 
     elif strategy == 2:
         print('strategy')
         print(strategy)
-        print(len(users_train))
-        for i in None_users:
+        for i in resultado:
             if i[0] not in Odiosos:
                 users_train.append(i[0])
 
@@ -544,13 +565,15 @@ def get_data_waseem3(s):
     elif strategy == 3:
         print('strategy')
         print(strategy)
-        for i in None_users:
+
+        for i in resultado:
              if i[0] not in Odiosos:
                 users_train.append(i[0])
 
         t = [Racist_users[0][0]]
         for i in t:
             users_train.append(i)
+
         count =0
         resultado = sorted(dict_users_sexist.items(), key=operator.itemgetter(0))
         resultado.reverse() 
@@ -558,9 +581,8 @@ def get_data_waseem3(s):
             if i[0] != Sexist_users[0][0] and i[0] not in  dict_users_racist.keys():
                 users_train.append(i[0]) 
             count += 1
-            
-    return tweets,users_train    
     
+    return tweets,users_train
 def get_data_dict(data,X_train,X_test,y_train,y_test,flag):
     x_text = np.concatenate((X_train,X_test),axis = 0)
     post_length = np.array([len(x.split(" ")) for x in x_text])
@@ -681,8 +703,10 @@ def get_data_dict(data,X_train,X_test,y_train,y_test,flag):
     return data_dicts
 
 def Holdout_partition(oversampling_rate,strategy,flag): #seleccionando para training los usuarios mas prolíferos
-    data = pickle.load(open('DatosCSV/waseem3.pkl', 'rb'))
-    _,train_users = get_data_waseem3(strategy)
+    data ,train_users = get_data_waseem3(strategy)
+    print('len(train_users)')
+
+    print(len(train_users))
     train_index = []
     x_text=[]
     labels=[]
@@ -694,23 +718,16 @@ def Holdout_partition(oversampling_rate,strategy,flag): #seleccionando para trai
     clasestrain = {}
     clasestest ={}
     none = 0
-    #train_users = ["Yes You're Sexist","Levi Stein","needlessly obscenity-laced","Male Tears #4648"]
     for i in range(len(data)):
-        if data[i]['name'] in train_users:        
-            train_index.append(i)
-        else:
-       # elif data[i]['label'] != 'racism':
-            test_index.append(i)
-   
-    for i in range(len(data)):
-        if i in train_index:
+
+        if data[i]['name'] in train_users:
             x_text_train.append(data[i]['text'])
             labels_train.append(data[i]['label'])
         else:
             x_text_test.append(data[i]['text'])
             labels_test.append(data[i]['label'])
             
-            
+    print(len(x_text_train))        
     if flag == 'binary':
         dict1 = {'sexism':1,'racism':1,'none':0}
     else:
@@ -744,6 +761,7 @@ def Holdout_partition(oversampling_rate,strategy,flag): #seleccionando para trai
     print(Counter(labels_train))
           
     post_length = np.array([len(x.split(" ")) for x in x_text_train])
+    
     max_document_length = int(np.percentile(post_length, 95))
     print("Document length : " + str(max_document_length))
     
@@ -776,51 +794,3 @@ def Holdout_partition(oversampling_rate,strategy,flag): #seleccionando para trai
     print(len(testX))
     print(len(testY))
     return data_dict
-
-def print_detalle_particion(X_train,y_train,X_test,y_test):
-    dict_users_train = {}
-    sexist_train=0
-    racist_train=0
-    normal_train=0
-    dict_users_test = {}
-    sexist_test=0
-    normal_test=0
-    racist_test=0
-    for i in X_train:
-        if i in dict_users_train.keys():
-            dict_users_train[i] += 1
-        else:
-            dict_users_train[i] = 1
-    for i in y_train:
-        if i == 0:
-            normal_train += 1
-        elif i == 2:
-            sexist_train += 1
-        else:
-            racist_train += 1  
-    for i in X_test:
-        if i in dict_users_test.keys():
-            dict_users_test[i] += 1
-        else:
-            dict_users_test[i] = 1
-    for i in y_test:
-        if i == 0:
-            normal_test += 1
-        elif i == 2:
-            sexist_test += 1
-        else:
-            racist_test += 1  
-            
-    print('En TRAIN SET')
-    print('Cantidad de Usuarios: '+ str(len(dict_users_train))) 
-    print('Tweets sexist: '+ str(sexist_train)) 
-    print('Tweets racist: '+ str(racist_train)) 
-    print('Tweets Normales: '+ str(normal_train)) 
-    print('\n')
-    resultado = sorted(dict_users_train.items(), key=operator.itemgetter(1))
-    resultado.reverse()
-    print('En TEST SET')
-    print('Cantidad de Usuarios: '+ str(len(dict_users_test))) 
-    print('\n')
-    resultado = sorted(dict_users_test.items(), key=operator.itemgetter(1))
-    resultado.reverse()

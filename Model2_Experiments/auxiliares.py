@@ -142,7 +142,7 @@ def evaluate_model(model, testX, testY,flag):
     print("Precision: " + str(precision) + "\n")
     print("Recall: " + str(recall) + "\n")
     print("f1_score: " + str(f1_score) + "\n")
-    print(confusion_matrix(y_true, y_pred))
+    #print(confusion_matrix(y_true, y_pred))
     
     print(":: Classification Report")
     print(classification_report(y_true, y_pred))
@@ -162,7 +162,7 @@ def load_data(dataset):
     labels = []
     if dataset =='train':
         print("Loading data from file: " + dataset)
-        data = pickle.load(open('../Data/Data_new.pkl', 'rb'))
+        data = pickle.load(open('../Data/Waseem_Dataset.pkl', 'rb'))
         print('len(dataaaaaa)')
         print(len(data))
     elif dataset == 'test':
@@ -170,7 +170,6 @@ def load_data(dataset):
 #         with open('../Data/train_en.tsv', 'r', encoding = 'utf-8') as sem_file:
 #             data = sem_file.readlines()
         data = pickle.load(open('../Data/SemEval_Dataset.pkl', 'rb'))
-        print(data[0])
   
     elif dataset == 'data_new':
         print("Loading data from file: " + dataset)

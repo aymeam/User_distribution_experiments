@@ -13,7 +13,7 @@ from auxiliares import *
 def run_model_exp6(oversampling_rate, vector_type, embed_size,flag): 
     model_type = "binary_blstm"
     X_train, y_train = load_data('data_new')
-    X_train, y_train = oversampling(X_train, y_train,3)
+    X_train, y_train = oversampling(X_train, y_train,oversampling_rate)
  
     X_test, y_test = load_data('test')
     
@@ -35,21 +35,9 @@ def run_model_exp6(oversampling_rate, vector_type, embed_size,flag):
     pn += precision
     rn += recall
     fn += f1_score
-    print ("None Average results are:")
-    print (pn)
-    print (rn)
-    print (fn)    
-        
-    print ("weigthed results are:")
-    print ("average accuracy is %f" %(a))
-    print ("average precision is %f" %(p))
-    print ("average recall is %f" %(r))
-    print ("average f1 is %f" %(f1))
+    
+    print_scores(p, p1, r,r1, f1, f11,pn, rn, fn,1)
 
-    print ("micro results are")
-    print ("average precision is %f" %(p1))
-    print ("average recall is %f" %(r1))
-    print ("average f1 is %f" %(f11)) 
     
 if __name__ == "__main__":
 #    parser = argparse.ArgumentParser(description="Experiment 3. Results using the Waseem & Hovy’s dataset as training set and SemEval 2019 as testing set")

@@ -13,7 +13,7 @@ from auxiliares import *
 def run_model_exp3(oversampling_rate, vector_type, embed_size,flag): 
     model_type = "blstm"
     X_train, y_train = load_data('train')
-    X_train, y_train = oversampling(X_train, y_train,3)
+    X_train, y_train = oversampling(X_train, y_train,oversampling_rate)
  
     X_test, y_test = load_data('test')
     

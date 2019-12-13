@@ -11,8 +11,9 @@ def run_exp_3 ():
     
     tweets_test ,_ = select_tweets('sem_eval',None)
     
-    vocab = gen_vocab(np.concatenate((tweets_train,tweets_test), axis = 0))   
-    
+   # vocab = gen_vocab(np.concatenate((tweets_train,tweets_test), axis = 0))   
+    vocab = gen_vocab(tweets_train)   
+
     MAX_SEQUENCE_LENGTH = max_len(tweets_train)
     
     train_LSTM_Cross_Domain(tweets_train, tweets_test, vocab, MAX_SEQUENCE_LENGTH) 
@@ -37,16 +38,10 @@ def train_LSTM_Cross_Domain(tweets_train, tweets_test, vocab, MAX_SEQUENCE_LENGT
         X_temp = np.hstack((X_train, y_train))
         
         
-        model = lstm_model(MAX_SEQUENCE_LENGTH, EMBEDDING_DIM)
+        model = lstm_model(MAX_SEQUENCE_LENGTH, EMBEDDING_DIM,vocab)
+#        shuffle_weights(model)
+        model.layers[0].set_weights([get_embedding_weights2(vocab)])
 
-        if INITIALIZE_WEIGHTS_WITH == "glove":
-            weights = get_embedding_weights(vocab)
-            model.layers[0].set_weights([weights])
-        elif INITIALIZE_WEIGHTS_WITH == "random":
-            shuffle_weights(model)
-        else:
-            print ("ERROR!")
-            return
         for epoch in range(EPOCHS):
             for X_batch in batch_gen(X_temp, BATCH_SIZE):
                 x = X_batch[:, :sentence_len]
@@ -76,24 +71,23 @@ def train_LSTM_Cross_Domain(tweets_train, tweets_test, vocab, MAX_SEQUENCE_LENGT
 
         word2vec_model = create_model(wordEmb,vocab)
         
-        tweets_train = select_tweets_whose_embedding_exists(tweets_train, word2vec_model)
-        tweets_test = select_tweets_whose_embedding_exists(tweets_test, word2vec_model)
-        
+      
         X_train, y_train = gen_data(tweets_train,word2vec_model,'categorical')
         X_test, y_test = gen_data(tweets_test,word2vec_model,'binary')
         
-        precision, recall, f1_score, acc, p_weighted, p_macro, r_weighted, r1_macro, f1_weighted, f11_macro = gradient_boosting_classifier(X_train, y_train, X_test, y_test, 'cross')
-        a += acc
-        p += p_weighted
-        p1 += p_macro
-        r += r_weighted
-        r1 += r1_macro
-        f1 += f1_weighted
-        f11 += f11_macro
+        model = gradient_boosting_classifier(X_train, y_train)
+        precision, recall, f1_score,precisionw, recallw, f1_scorew,precisionm, recallm, f1_scorem =evaluate_model(model, X_test, y_test, 'cross')
+        
+        p += precisionw
+        p1 += precisionm
+        r += recallw
+        r1 += recallm
+        f1 += f1_scorew
+        f11 += f1_scorem
         pn += precision
         rn += recall
         fn += f1_score
-        print_scores(p, p1, r,r1, f1, f11,pn, rn, fn, 1)
+        print_scores(p, p1, r,r1, f1, f11,pn, rn, fn,1)
 
     
 if __name__ == "__main__":
@@ -108,6 +102,4 @@ if __name__ == "__main__":
     SCALE_LOSS_FUN = None
     SEED = 42
     np.random.seed(SEED)
-    word2vec_model = gensim.models.KeyedVectors.load_word2vec_format(GLOVE_MODEL_FILE)
-
     run_exp_3()

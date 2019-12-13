@@ -3,6 +3,7 @@ from keras.preprocessing.sequence import pad_sequences
 import numpy as np
 import pdb
 from auxiliares import *
+from models import *
 
 def run_model_exp1():        
     #Experimento 1 Cross-Validation
@@ -28,7 +29,8 @@ def train_LSTM_variante1(tweets, vocab, MAX_SEQUENCE_LENGTH):
     y_train = y.reshape((len(y), 1))
     X_temp = np.hstack((X, y_train))
    
-    model = lstm_model(MAX_SEQUENCE_LENGTH, EMBEDDING_DIM)
+    model = lstm_model(MAX_SEQUENCE_LENGTH, EMBEDDING_DIM,vocab)
+    
     #initializing with random embeddings
     shuffle_weights(model)
     
@@ -50,29 +52,32 @@ def train_LSTM_variante1(tweets, vocab, MAX_SEQUENCE_LENGTH):
   
     #Step 2: Cross- Validation Using the XGB classifier and the learned embeddings
     word2vec_model = create_model(wordEmb,vocab)
+    
+    tweets = select_tweets_whose_embedding_exists(tweets, word2vec_model)
 
     X, y = gen_data(tweets, word2vec_model,'categorical')
-    cv_object = KFold(n_splits=NO_OF_FOLDS, shuffle=True, random_state=42)
-    
-   
 
-    for train_index, test_index in cv_object.split(X):
+    cv_object = StratifiedKFold(n_splits=NO_OF_FOLDS, shuffle=True, random_state=42)
+
+    for train_index, test_index in cv_object.split(X,y):
         X_train, y_train = X[train_index],y[train_index]
         X_test, y_test = X[test_index],y[test_index]
+        X_train, y_train = sklearn.utils.shuffle(X_train, y_train)
+
+        X_test, y_test = sklearn.utils.shuffle(X_test, y_test)
+        model = gradient_boosting_classifier(X_train, y_train)
+        precision, recall, f1_score,precisionw, recallw, f1_scorew,precisionm, recallm, f1_scorem =evaluate_model(model, X_test, y_test, 'categorical')
         
-        precision, recall, f1_score, acc, p_weighted, p_macro, r_weighted, r1_macro, f1_weighted, f11_macro = gradient_boosting_classifier(X_train, y_train,X_test, y_test,'categorical')
-        a += acc
-        p += p_weighted
-        p1 += p_macro
-        r += r_weighted
-        r1 += r1_macro
-        f1 += f1_weighted
-        f11 += f11_macro
+        p += precisionw
+        p1 += precisionm
+        r += recallw
+        r1 += recallm
+        f1 += f1_scorew
+        f11 += f1_scorem
         pn += precision
         rn += recall
         fn += f1_score
-        
-    print_scores(p, p1, r,r1, f1, f11,pn, rn, fn, NO_OF_FOLDS)    
+    print_scores(p, p1, r,r1, f1, f11,pn, rn, fn,NO_OF_FOLDS)
     
 if __name__ == "__main__":
     TOKENIZER = 'glove'
